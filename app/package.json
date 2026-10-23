@@ -1,0 +1,15 @@
+{
+  "name": "stillshock",
+  "version": "0.1.0",
+  "description": "One still. One tap. A shock of VFX with sound. Photo-to-VFX clips built on ComfyUI and LTX-2.5.",
+  "type": "module",
+  "private": true,
+  "license": "MIT",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node --watch server.mjs",
+    "mock": "node dev/mock-comfy.mjs",
+    "check": "node --check server.mjs && node --check lib/comfy.mjs && node --check lib/effects.mjs && node --check lib/jobs.mjs && node --check lib/workflow.mjs && node --check public/app.js && node --check dev/mock-comfy.mjs"
+  }
+}

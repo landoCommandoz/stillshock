@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <title>Stillshock</title>
+  <meta name="description" content="One still. One tap. A shock of VFX with sound. Open-source photo-to-VFX built on ComfyUI and LTX-2.5.">
+  <meta name="theme-color" content="#0b0b10">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="device-preview-bar" class="devbar" aria-label="Device preview, remove before deploy">
+    <button class="devbar-toggle" id="devbar-toggle" type="button" title="Device preview (remove before deploy)">⌗</button>
+    <div class="devbar-body" id="devbar-body" hidden>
+      <span class="devbar-label">Device preview, remove before deploy</span>
+      <button type="button" data-width="375px">📱 Mobile</button>
+      <button type="button" data-width="768px">📟 Tablet</button>
+      <button type="button" data-width="100%">🖥 Desktop</button>
+    </div>
+  </div>
+
+  <div id="frame" class="frame">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <div id="app" class="app">
+      <header class="top reveal" style="--d:0">
+        <a class="brand" href="#" id="brand">
+          <span class="brand-mark" aria-hidden="true"></span>
+          <span class="brand-name">Stillshock</span>
+        </a>
+        <nav class="tabs" role="tablist">
+          <button class="tab is-active" role="tab" data-view="make" type="button">Make</button>
+          <button class="tab" role="tab" data-view="gallery" type="button">Gallery</button>
+        </nav>
+        <button class="debug-toggle" id="debug-toggle" type="button" title="State panel (remove before final deploy)">{ }</button>
+      </header>
+
+      <main class="main">
+        <!-- MAKE VIEW -->
+        <section id="view-make" class="view is-active" data-view="make">
+          <div class="scroll">
+            <div class="hero reveal" style="--d:1">
+              <h1 class="hero-title">One still.<br><em>One tap.</em><br>A shock of VFX.</h1>
+              <p class="hero-sub">Drop in a photo, pick an effect, get a 5 to 6 second clip with its own sound. Open weights, start to finish.</p>
+            </div>
+
+            <div id="key-panel" class="panel key-panel reveal" style="--d:2" hidden>
+              <div class="panel-head">
+                <span class="step">Key</span>
+                <h2>Your Comfy API key</h2>
+              </div>
+              <p class="muted">Generations run on your own Comfy Cloud account. The key stays in this browser and is sent only with your requests. Get one at <a href="https://platform.comfy.org" target="_blank" rel="noopener">platform.comfy.org</a>.</p>
+              <div class="key-row">
+                <input id="key-input" type="password" inputmode="text" autocomplete="off" placeholder="comfyui-..." aria-label="Comfy API key">
+                <button id="key-save" class="btn btn-ghost" type="button">Save</button>
+              </div>
+              <p id="key-status" class="tiny muted"></p>
+            </div>
+
+            <div id="examples-only" class="panel reveal" style="--d:2" hidden>
+              <div class="panel-head"><span class="step">Demo</span><h2>Examples only</h2></div>
+              <p class="muted">This public copy does not generate. Browse the gallery, then run Stillshock yourself from the README to make your own.</p>
+            </div>
+
+            <div class="panel reveal" style="--d:3">
+              <div class="panel-head">
+                <span class="step">01</span>
+                <h2>Pick a photo</h2>
+              </div>
+              <div class="photo-row">
+                <label id="drop" class="drop" for="file-input">
+                  <input id="file-input" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+                  <div id="drop-empty" class="drop-empty">
+                    <span class="drop-icon" aria-hidden="true">+</span>
+                    <span class="drop-text">Tap to choose or drop a photo</span>
+                    <span class="tiny muted">PNG, JPEG or WebP. Faces, pets, products, places.</span>
+                  </div>
+                  <canvas id="crop-canvas" class="crop-canvas" hidden></canvas>
+                </label>
+                <div class="photo-side">
+                  <div class="format-row" id="format-row" role="radiogroup" aria-label="Clip format"></div>
+                  <div class="samples" id="samples" aria-label="Sample photos"></div>
+                  <input id="subject-hint" class="hint" type="text" maxlength="200" placeholder="Optional: what is in the photo? (a golden retriever on a beach)">
+                </div>
+              </div>
+            </div>
+
+            <div class="panel reveal" style="--d:4">
+              <div class="panel-head">
+                <span class="step">02</span>
+                <h2>Pick an effect</h2>
+              </div>
+              <div class="effects" id="effects" role="radiogroup" aria-label="Effect"></div>
+            </div>
+
+            <div class="panel result-panel" id="result-panel" hidden>
+              <div class="panel-head">
+                <span class="step">03</span>
+                <h2 id="result-title">Generating</h2>
+              </div>
+              <div id="progress" class="progress">
+                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+                <div class="progress-meta">
+                  <span id="progress-msg">Uploading photo</span>
+                  <span id="progress-time" class="muted">0s</span>
+                </div>
+                <p class="tiny muted">Usually 1 to 3 minutes on Comfy Cloud. You can keep this tab open or come back later.</p>
+                <button id="cancel-btn" class="btn btn-ghost" type="button">Cancel</button>
+              </div>
+              <div id="result" class="result" hidden>
+                <div class="player-wrap">
+                  <video id="player" class="player" playsinline controls loop preload="metadata"></video>
+                  <button id="unmute" class="unmute" type="button" hidden>🔊 Tap for sound</button>
+                </div>
+                <div class="result-actions">
+                  <a id="download" class="btn btn-primary" download>Download MP4</a>
+                  <button id="copy-caption" class="btn btn-ghost" type="button">Copy caption</button>
+                  <button id="share" class="btn btn-ghost" type="button" hidden>Share</button>
+                  <button id="remix" class="btn btn-ghost" type="button">Another effect</button>
+                </div>
+                <p id="caption" class="caption"></p>
+              </div>
+              <div id="result-error" class="error" hidden>
+                <p id="error-text"></p>
+                <div class="result-actions">
+                  <button id="retry" class="btn btn-primary" type="button">Try again</button>
+                  <button id="error-back" class="btn btn-ghost" type="button">Back</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel recent-panel" id="recent-panel" hidden>
+              <div class="panel-head"><span class="step">Recent</span><h2>Your clips</h2></div>
+              <div class="recent" id="recent"></div>
+            </div>
+            <div class="spacer"></div>
+          </div>
+          <div class="cta-bar" id="cta-bar">
+            <button id="generate" class="btn btn-primary btn-big" type="button" disabled>Pick a photo and an effect</button>
+          </div>
+        </section>
+
+        <!-- GALLERY VIEW -->
+        <section id="view-gallery" class="view" data-view="gallery">
+          <div class="scroll">
+            <div class="hero reveal">
+              <h1 class="hero-title">Made with <em>Stillshock</em></h1>
+              <p class="hero-sub">Every clip here started as a single photo. Sound included, generated in the same pass.</p>
+            </div>
+            <div class="gallery" id="gallery"></div>
+            <p id="gallery-empty" class="muted center" hidden>No examples yet. Generate a clip and add it to the examples folder.</p>
+            <div class="spacer"></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="foot">
+        <span>Built with ComfyUI and LTX-2.5. Open source, MIT.</span>
+        <a href="https://github.com/landoCommandoz/stillshock" target="_blank" rel="noopener" id="repo-link">GitHub</a>
+      </footer>
+    </div>
+
+    <aside id="debug-panel" class="debug" hidden>
+      <div class="debug-head"><strong>State panel</strong> <span class="tiny muted">removable before final deploy</span></div>
+      <pre id="debug-body">{}</pre>
+    </aside>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

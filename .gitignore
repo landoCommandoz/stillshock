@@ -1,0 +1,9 @@
+node_modules/
+.env
+.env.*
+*.log
+.DS_Store
+app/uploads/
+app/outputs/
+app/.cache/
+/tmp/

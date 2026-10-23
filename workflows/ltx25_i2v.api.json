@@ -1,0 +1,7 @@
+{
+  "_comment": "PLACEHOLDER for local mock testing only. Replaced by the real LTX-2.5 I2V export.",
+  "395": { "class_type": "LoadImage", "inputs": { "image": "placeholder.png" } },
+  "10": { "class_type": "CLIPTextEncode", "inputs": { "text": "placeholder", "clip": ["11", 0] } },
+  "20": { "class_type": "EmptyLTXVLatentVideo", "inputs": { "width": 720, "height": 1280, "length": 121, "batch_size": 1 } },
+  "75": { "class_type": "SaveVideo", "inputs": { "filename_prefix": "video/stillshock", "format": "auto", "codec": "auto", "video": ["30", 0] } }
+}
