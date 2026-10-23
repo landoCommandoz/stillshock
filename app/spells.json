@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "notes": "Every spell is one LTX-2.3 IC-LoRA (or LoRA) applied video-to-video. The app pre-sizes the clip, builds the ComfyUI graph from graph.py, and runs it on Comfy Cloud or a local ComfyUI. 'cloud_ready' means the LoRA file ships in Comfy's own template library, so it is already on Comfy Cloud. The others are open weights on Hugging Face and must be imported into Comfy Cloud's model library (Creator plan or above) or downloaded into models/loras for a local run.",
+  "notes": "Every spell is one LTX-2.3 IC-LoRA (or LoRA) applied video-to-video. 'cloud_ready' spells use LoRA files that ship in Comfy's own template library, so they run on Comfy Cloud with no import. The others need a local GPU (download the LoRA into models/loras) or a Comfy Cloud plan that allows LoRA import; set SPELLCLIP_EXTRA_LORAS to a comma list of spell ids once imported. Strengths follow the identity-first rule: as strong as the model card allows without warping faces or framing.",
   "base_models": {
     "distilled": {
       "checkpoint": "ltx-2.3-22b-distilled-fp8.safetensors",
@@ -18,62 +18,60 @@
     "text_encoder_url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
   },
   "sizes": {
-    "fast": { "landscape": [960, 544], "portrait": [544, 960], "square": [736, 736] },
-    "hd":   { "landscape": [1280, 704], "portrait": [704, 1280], "square": [960, 960] },
-    "full": { "landscape": [1920, 1088], "portrait": [1088, 1920], "square": [1440, 1440] }
+    "fast": {
+      "landscape": [
+        960,
+        544
+      ],
+      "portrait": [
+        544,
+        960
+      ],
+      "square": [
+        736,
+        736
+      ]
+    },
+    "hd": {
+      "landscape": [
+        1280,
+        704
+      ],
+      "portrait": [
+        704,
+        1280
+      ],
+      "square": [
+        960,
+        960
+      ]
+    },
+    "full": {
+      "landscape": [
+        1920,
+        1088
+      ],
+      "portrait": [
+        1088,
+        1920
+      ],
+      "square": [
+        1440,
+        1440
+      ]
+    }
   },
-  "durations": { "short": 121, "long": 169 },
+  "durations": {
+    "short": 121,
+    "long": 169
+  },
   "fps": 24,
   "spells": [
     {
-      "id": "splash",
-      "name": "Add Water",
-      "tagline": "Rain, floods, surf or a waterfall, poured into your shot.",
-      "icon": "💧",
-      "group": "vfx",
-      "base": "distilled",
-      "lora": "ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors",
-      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Water-Simulation",
-      "lora_strength": 1.2,
-      "cloud_ready": false,
-      "credit": "Lightricks, LTX-2 Community License",
-      "prompt": "Reference shows {scene}. Edited shows the same scene with water added. ADD WATER {water}. Subject identity, clothing, framing, and background geometry are identical to the reference; only water-related elements differ between reference and edited.",
-      "negative": "deformed water, morphing faces, inconsistent clothing, blurry, jittery, distorted, worst quality",
-      "variants": [
-        { "id": "rain", "name": "Downpour", "water": "heavy rain pouring down through the frame, droplets splashing on every surface, wet reflective ground, mist in the air" },
-        { "id": "flood", "name": "Flood", "water": "murky flood water filling the ground, rising and partially submerging everything low in the frame, ripples spreading outward" },
-        { "id": "surf", "name": "Ocean Surf", "water": "foaming ocean surf rushing in across the ground, white spray splashing up, water pulling back between waves" },
-        { "id": "waterfall", "name": "Waterfall", "water": "a roaring waterfall cascading down behind the subject, spray and mist drifting through the frame" },
-        { "id": "stream", "name": "Gentle Stream", "water": "a shallow, clear stream flowing across the ground, rippling gently around the subject" }
-      ],
-      "scene_field": true
-    },
-    {
-      "id": "nightfall",
-      "name": "Nightfall",
-      "tagline": "Turn broad daylight into night, same shot, same motion.",
-      "icon": "🌙",
-      "group": "vfx",
-      "base": "distilled",
-      "lora": "ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors",
-      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Day-To-Night",
-      "lora_strength": 1.0,
-      "cloud_ready": false,
-      "credit": "Lightricks, LTX-2 Community License",
-      "prompt": "{scene} at night, {light}. Only the lighting changes from day to night; identical composition, framing, camera movement and motion.",
-      "negative": "daytime, bright sunlight, blue sky, overexposed, worst quality, inconsistent motion, blurry, jittery, distorted",
-      "variants": [
-        { "id": "stars", "name": "Starry Night", "light": "under a dark, star-filled sky with a faint Milky Way, cool moonlight and deep natural shadows" },
-        { "id": "neon", "name": "Neon City", "light": "lit by cool streetlights and colorful neon signs, wet reflections, deep shadows" },
-        { "id": "campfire", "name": "Warm Lamplight", "light": "lit by warm amber tungsten light from one side, deep shadows, high contrast" }
-      ],
-      "scene_field": true
-    },
-    {
       "id": "googly",
       "name": "Googly Eyes",
-      "tagline": "Everyone in frame gets googly eyes. Yes, everyone.",
-      "icon": "👀",
+      "tagline": "Everyone in frame gets googly eyes. Same face, same shot, suddenly ridiculous.",
+      "icon": "\ud83d\udc40",
       "group": "fun",
       "base": "dev",
       "lora": "ltx-2.3-googlyeyes.safetensors",
@@ -87,78 +85,29 @@
       "scene_field": false
     },
     {
-      "id": "vanish",
-      "name": "Vanish",
-      "tagline": "Remove every moving person from the shot and leave a clean, empty scene.",
-      "icon": "🫥",
-      "group": "vfx",
-      "base": "distilled",
-      "lora": "ltx-2.3-22b-ic-lora-clean-plate-1.0.safetensors",
-      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Clean-Plate",
-      "lora_strength": 1.0,
-      "cloud_ready": false,
-      "credit": "Lightricks, LTX-2 Community License",
-      "prompt": "An empty clean plate of the exact same location. {scene}. No people, no body parts, no moving subjects appear; the background, lighting and camera motion are identical to the reference.",
-      "negative": "people, person, body parts, hands, backpack, person shadows, ghosting, blur, jitter, distorted, worst quality",
-      "variants": [],
-      "scene_field": true
-    },
-    {
-      "id": "colorize",
-      "name": "Colorize",
-      "tagline": "Bring black and white footage into natural color.",
-      "icon": "🎨",
-      "group": "fix",
-      "base": "distilled",
-      "lora": "ltx-2.3-22b-ic-lora-colorization-0.9.safetensors",
-      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Colorization",
-      "lora_strength": 1.0,
-      "cloud_ready": false,
-      "credit": "Lightricks, LTX-2 Community License",
-      "prompt": "Reference shows a grayscale video of {scene}. Edited shows the same scene with natural colors restored. COLORIZE {scene}, natural lifelike colors, realistic skin tones and sky. Subject identity, framing, and background geometry match the reference; only color differs.",
-      "negative": "oversaturated, color bleed, blurry, jittery, distorted, worst quality",
-      "variants": [],
-      "scene_field": true
-    },
-    {
-      "id": "restore",
-      "name": "Restore",
-      "tagline": "Old, scratched, faded footage comes back sharp and modern.",
-      "icon": "🎞️",
-      "group": "fix",
+      "id": "reframe",
+      "name": "Go Vertical",
+      "tagline": "Landscape to a true 9:16 vertical. The model paints the missing top and bottom.",
+      "icon": "\ud83d\udcf1",
+      "group": "frame",
       "base": "dev",
-      "lora": "ltx-2.3-dearchive-lora_weights_step_05000.safetensors",
-      "lora_url": "https://comfy.org/workflows",
+      "lora": "ltx-2.3-22b-ic-lora-outpaint.safetensors",
+      "lora_url": "https://huggingface.co/oumoumad/LTX-2.3-22b-IC-LoRA-Outpaint",
       "lora_strength": 1.0,
       "cloud_ready": true,
-      "credit": "Comfy template library (Dearchive LoRA)",
-      "prompt": "A modern, high-resolution video shot in vivid color, sharp detail, contemporary cinematography.",
-      "negative": "pc game, console game, video game, cartoon, childish, ugly",
+      "credit": "oumoumad, Comfy template library",
+      "prompt": "{scene}",
+      "negative": "pc game, console game, video game, ugly, 3d render, photo, still, static, slow",
       "variants": [],
-      "scene_field": false
-    },
-    {
-      "id": "shave",
-      "name": "Instant Shave",
-      "tagline": "Beard gone in one click. The face, the motion and the voice stay.",
-      "icon": "🪒",
-      "group": "fun",
-      "base": "distilled",
-      "lora": "ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors",
-      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Instant-Shave",
-      "lora_strength": 1.0,
-      "cloud_ready": false,
-      "credit": "Lightricks, LTX-2 Community License",
-      "prompt": "REMOVEBEARD {scene}, completely smooth and clean-shaven, bare skin, no beard, no stubble, no facial hair.",
-      "negative": "beard, mustache, facial hair, stubble, worst quality, inconsistent motion, blurry, jittery, distorted",
-      "variants": [],
-      "scene_field": true
+      "scene_field": true,
+      "scene_optional": true,
+      "pad_to": "portrait"
     },
     {
       "id": "erase",
       "name": "Erase Object",
       "tagline": "Name the thing in the foreground and it disappears.",
-      "icon": "🧹",
+      "icon": "\ud83e\uddf9",
       "group": "fix",
       "base": "dev",
       "lora": "ltx23-obscura_remova.safetensors",
@@ -177,7 +126,7 @@
       "id": "cleantext",
       "name": "Clean Text",
       "tagline": "Strip burned-in subtitles, captions and watermarks.",
-      "icon": "🧼",
+      "icon": "\ud83e\uddfc",
       "group": "fix",
       "base": "dev",
       "lora": "ltx2.3-ic-subtitles-remove-general.safetensors",
@@ -191,23 +140,149 @@
       "scene_field": false
     },
     {
-      "id": "reframe",
-      "name": "Go Vertical",
-      "tagline": "Turn a landscape clip into a full 9:16 vertical. The model paints the missing top and bottom.",
-      "icon": "📱",
-      "group": "frame",
+      "id": "restore",
+      "name": "Restore",
+      "tagline": "Old, scratched, faded footage comes back sharp and modern.",
+      "icon": "\ud83c\udf9e\ufe0f",
+      "group": "fix",
       "base": "dev",
-      "lora": "ltx-2.3-22b-ic-lora-outpaint.safetensors",
-      "lora_url": "https://huggingface.co/oumoumad/LTX-2.3-22b-IC-LoRA-Outpaint",
+      "lora": "ltx-2.3-dearchive-lora_weights_step_05000.safetensors",
+      "lora_url": "https://comfy.org/workflows",
       "lora_strength": 1.0,
       "cloud_ready": true,
-      "credit": "oumoumad, Comfy template library",
-      "prompt": "{scene}",
-      "negative": "pc game, console game, video game, ugly, 3d render, photo, still, static, slow",
+      "credit": "Comfy template library (Dearchive LoRA)",
+      "prompt": "A modern, high-resolution video shot in vivid color, sharp detail, contemporary cinematography.",
+      "negative": "pc game, console game, video game, cartoon, childish, ugly",
       "variants": [],
+      "scene_field": false
+    },
+    {
+      "id": "splash",
+      "name": "Add Water",
+      "tagline": "Rain, floods, surf or a waterfall, poured into your shot.",
+      "icon": "\ud83d\udca7",
+      "group": "vfx",
+      "base": "distilled",
+      "lora": "ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors",
+      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Water-Simulation",
+      "lora_strength": 1.1,
+      "cloud_ready": false,
+      "credit": "Lightricks, LTX-2 Community License",
+      "prompt": "Reference shows {scene}. Edited shows the same scene with water added. ADD WATER {water}. Subject identity, clothing, framing, and background geometry are identical to the reference; only water-related elements differ between reference and edited.",
+      "negative": "deformed water, morphing faces, inconsistent clothing, blurry, jittery, distorted, worst quality",
+      "variants": [
+        {
+          "id": "rain",
+          "name": "Downpour",
+          "water": "heavy rain pouring down through the frame, droplets splashing on every surface, wet reflective ground, mist in the air"
+        },
+        {
+          "id": "flood",
+          "name": "Flood",
+          "water": "murky flood water filling the ground, rising and partially submerging everything low in the frame, ripples spreading outward"
+        },
+        {
+          "id": "surf",
+          "name": "Ocean Surf",
+          "water": "foaming ocean surf rushing in across the ground, white spray splashing up, water pulling back between waves"
+        },
+        {
+          "id": "waterfall",
+          "name": "Waterfall",
+          "water": "a roaring waterfall cascading down behind the subject, spray and mist drifting through the frame"
+        },
+        {
+          "id": "stream",
+          "name": "Gentle Stream",
+          "water": "a shallow, clear stream flowing across the ground, rippling gently around the subject"
+        }
+      ],
       "scene_field": true,
-      "scene_optional": true,
-      "pad_to": "portrait"
+      "strength_note": "Model card: 1.0 to 1.05 keeps identity safest, 1.1 to 1.5 replaces surfaces, 1.5+ warps faces. 1.1 is the hardest setting that stays identity-safe."
+    },
+    {
+      "id": "nightfall",
+      "name": "Nightfall",
+      "tagline": "Turn broad daylight into night, same shot, same motion.",
+      "icon": "\ud83c\udf19",
+      "group": "vfx",
+      "base": "distilled",
+      "lora": "ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors",
+      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Day-To-Night",
+      "lora_strength": 1.0,
+      "cloud_ready": false,
+      "credit": "Lightricks, LTX-2 Community License",
+      "prompt": "{scene} at night, {light}. Only the lighting changes from day to night; identical composition, framing, camera movement and motion.",
+      "negative": "daytime, bright sunlight, blue sky, overexposed, worst quality, inconsistent motion, blurry, jittery, distorted",
+      "variants": [
+        {
+          "id": "stars",
+          "name": "Starry Night",
+          "light": "under a dark, star-filled sky with a faint Milky Way, cool moonlight and deep natural shadows"
+        },
+        {
+          "id": "neon",
+          "name": "Neon City",
+          "light": "lit by cool streetlights and colorful neon signs, wet reflections, deep shadows"
+        },
+        {
+          "id": "campfire",
+          "name": "Warm Lamplight",
+          "light": "lit by warm amber tungsten light from one side, deep shadows, high contrast"
+        }
+      ],
+      "scene_field": true
+    },
+    {
+      "id": "vanish",
+      "name": "Vanish",
+      "tagline": "Remove every moving person from the shot and leave a clean, empty scene.",
+      "icon": "\ud83e\udee5",
+      "group": "vfx",
+      "base": "distilled",
+      "lora": "ltx-2.3-22b-ic-lora-clean-plate-1.0.safetensors",
+      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Clean-Plate",
+      "lora_strength": 1.0,
+      "cloud_ready": false,
+      "credit": "Lightricks, LTX-2 Community License",
+      "prompt": "An empty clean plate of the exact same location. {scene}. No people, no body parts, no moving subjects appear; the background, lighting and camera motion are identical to the reference.",
+      "negative": "people, person, body parts, hands, backpack, person shadows, ghosting, blur, jitter, distorted, worst quality",
+      "variants": [],
+      "scene_field": true
+    },
+    {
+      "id": "shave",
+      "name": "Instant Shave",
+      "tagline": "Beard gone in one click. The face, the motion and the voice stay.",
+      "icon": "\ud83e\ude92",
+      "group": "fun",
+      "base": "distilled",
+      "lora": "ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors",
+      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Instant-Shave",
+      "lora_strength": 1.0,
+      "cloud_ready": false,
+      "credit": "Lightricks, LTX-2 Community License",
+      "prompt": "REMOVEBEARD {scene}, completely smooth and clean-shaven, bare skin, no beard, no stubble, no facial hair.",
+      "negative": "beard, mustache, facial hair, stubble, worst quality, inconsistent motion, blurry, jittery, distorted",
+      "variants": [],
+      "scene_field": true
+    },
+    {
+      "id": "colorize",
+      "name": "Colorize",
+      "tagline": "Bring black and white footage into natural color.",
+      "icon": "\ud83c\udfa8",
+      "group": "fix",
+      "base": "distilled",
+      "lora": "ltx-2.3-22b-ic-lora-colorization-0.9.safetensors",
+      "lora_url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Colorization",
+      "lora_strength": 1.0,
+      "cloud_ready": false,
+      "credit": "Lightricks, LTX-2 Community License",
+      "prompt": "Reference shows a grayscale video of {scene}. Edited shows the same scene with natural colors restored. COLORIZE {scene}, natural lifelike colors, realistic skin tones and sky. Subject identity, framing, and background geometry match the reference; only color differs.",
+      "negative": "oversaturated, color bleed, blurry, jittery, distorted, worst quality",
+      "variants": [],
+      "scene_field": true
     }
   ]
 }

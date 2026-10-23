@@ -15,18 +15,26 @@ Built for Comfy's Open Source Higgsfield competition (LTX VFX track, open weight
 
 ## What you get
 
-| Spell | What it does | Model (open weights) |
-|---|---|---|
-| Add Water | Rain, flood, surf, waterfall or a stream, with five flavors | Lightricks LTX-2.3 IC-LoRA Water Simulation |
-| Nightfall | Daylight to night, same shot and motion, three looks | Lightricks LTX-2.3 IC-LoRA Day-To-Night |
-| Vanish | Removes every moving person, rebuilds the background | Lightricks LTX-2.3 IC-LoRA Clean Plate |
-| Googly Eyes | Everyone gets googly eyes | TheBurgstall LTX-2.3 Googly Eyes LoRA |
-| Instant Shave | Beard off, face and voice intact | Lightricks LTX-2.3 IC-LoRA Instant Shave |
-| Colorize | Black and white to natural color | Lightricks LTX-2.3 IC-LoRA Colorization |
-| Restore | Scratched, faded footage comes back sharp | Dearchive LoRA (Comfy template library) |
-| Erase Object | Name the foreground object, it disappears | Obscura Remova LoRA (Comfy template library) |
-| Clean Text | Strips subtitles, captions and watermarks | Subtitle removal LoRA (Comfy template library) |
-| Go Vertical | Landscape to 9:16, the model outpaints the bars | LTX-2.3 IC-LoRA Outpaint (oumoumad) |
+Five spells run on Comfy Cloud today with no setup beyond an API key. The other five use
+Lightricks adapters that are not in the Cloud model library yet, so they need your own GPU
+(or a Cloud plan that allows LoRA import). The app checks this and shows the second group
+as "Needs your own GPU" when it is running against Cloud.
+
+| Spell | What it does | Model (open weights) | Runs on |
+|---|---|---|---|
+| Googly Eyes | Everyone gets googly eyes | TheBurgstall LTX-2.3 Googly Eyes LoRA | Cloud, local |
+| Go Vertical | Landscape to 9:16, the model outpaints the bars | LTX-2.3 IC-LoRA Outpaint (oumoumad) | Cloud, local |
+| Erase Object | Name the foreground object, it disappears | Obscura Remova LoRA (Comfy template library) | Cloud, local |
+| Clean Text | Strips subtitles, captions and watermarks | Subtitle removal LoRA (Comfy template library) | Cloud, local |
+| Restore | Scratched, faded footage comes back sharp | Dearchive LoRA (Comfy template library) | Cloud, local |
+| Add Water | Rain, flood, surf, waterfall or a stream, five flavors | Lightricks LTX-2.3 IC-LoRA Water Simulation | local |
+| Nightfall | Daylight to night, same shot and motion, three looks | Lightricks LTX-2.3 IC-LoRA Day-To-Night | local |
+| Vanish | Removes every moving person, rebuilds the background | Lightricks LTX-2.3 IC-LoRA Clean Plate | local |
+| Instant Shave | Beard off, face and voice intact | Lightricks LTX-2.3 IC-LoRA Instant Shave | local |
+| Colorize | Black and white to natural color | Lightricks LTX-2.3 IC-LoRA Colorization | local |
+
+Strengths follow one rule: as strong as each model card allows without warping faces or
+framing. The magic is "same person, same shot, impossible change."
 
 Every result comes with a before/after split video for sharing, a hold-to-compare
 preview, a download button, and a "stack another spell" button that feeds the result
@@ -79,11 +87,11 @@ export COMFY_API_KEY="comfyui-..."   # PowerShell: $env:COMFY_API_KEY = "comfyui
 python app/server.py
 ```
 
-3. The header pill now says **Comfy Cloud**. Spells marked **cloud ready** use LoRA
-   files that Comfy's own template library already hosts. For the others, open the
-   Cloud Model Library, press Import, and paste the Hugging Face link from the table in
-   `workflows/README.md` (Creator plan or above; the Lightricks repos are gated, so
-   accept their license on Hugging Face first).
+3. The header pill now says **Comfy Cloud** and the five cloud-ready spells are live.
+   If your plan allows LoRA import, open the Cloud Model Library, press Import, paste
+   the Hugging Face links from `workflows/README.md` (the Lightricks repos are gated, so
+   accept their license on Hugging Face first), then start the server with
+   `SPELLCLIP_EXTRA_LORAS=all` to unlock the other five.
 
 ### Run on your own GPU
 
@@ -109,6 +117,7 @@ The Comfy SDK also works against a `comfy-api-proxy` next to your ComfyUI; set
 | `COMFY_BASE_URL` | A Comfy API deployment or a self-hosted proxy, instead of Cloud. |
 | `COMFYUI_URL` | A plain local ComfyUI (REST). |
 | `SPELLCLIP_BACKEND` | Force `cloud`, `local` or `demo`. |
+| `SPELLCLIP_EXTRA_LORAS` | On Cloud: comma list of spell ids whose LoRA you imported, or `all`. |
 | `SPELLCLIP_DATA` | Where uploads and results are stored (default `app/data`). |
 | `SPELLCLIP_MAX_UPLOAD_MB` | Upload limit, default 300. |
 | `PORT` | Server port, default 8787. |
@@ -178,7 +187,11 @@ A server restart marks any in-flight job as error with a plain message.
    backend maps a missing model into a plain-English error that points to the README.
 2. **Clip shape.** LTX needs 8n+1 frames and 32-multiple sizes. The server never trusts
    the upload: ffmpeg re-encodes to 24 fps, fits the canvas, and rounds the frame count.
-3. **Long waits and lost connections.** Jobs run in a worker thread and persist to disk.
+3. **Double taps on a paid run.** The server hashes the clip and the settings. An exact
+   repeat while that job is running or done returns the existing job instead of spending
+   another run. Different spells queue, so stacking still works, and "Same spell, new seed"
+   explicitly forces a fresh run.
+4. **Long waits and lost connections.** Jobs run in a worker thread and persist to disk.
    The browser polls, tolerates network blips, and restores the last job after a reload.
 
 ## Validation without a GPU

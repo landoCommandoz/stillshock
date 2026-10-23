@@ -66,32 +66,37 @@
 
   // ---------- rendering ----------
   function renderSpells() {
-    const groups = { vfx: 'VFX', fun: 'Fun', fix: 'Fix', frame: 'Frame' };
     const host = $('spell-groups');
     host.innerHTML = '';
-    Object.keys(groups).forEach((g) => {
-      const spells = state.config.spells.filter((s) => s.group === g);
+    const ready = state.config.spells.filter((s) => s.available !== false);
+    const gpuOnly = state.config.spells.filter((s) => s.available === false);
+    const section = (title, spells, disabled) => {
       if (!spells.length) return;
-      const title = document.createElement('div');
-      title.className = 'spell-group-title';
-      title.textContent = groups[g];
-      host.appendChild(title);
+      const t = document.createElement('div');
+      t.className = 'spell-group-title';
+      t.textContent = title;
+      host.appendChild(t);
       const grid = document.createElement('div');
       grid.className = 'spell-grid';
       spells.forEach((s) => {
         const b = document.createElement('button');
         b.type = 'button';
-        b.className = 'spell-card';
+        b.className = 'spell-card' + (disabled ? ' disabled' : '');
         b.dataset.spell = s.id;
+        b.disabled = !!disabled;
+        if (disabled) b.title = s.availability_note || 'Needs a local GPU';
+        const badge = disabled ? 'local gpu' : (s.cloud_ready ? 'cloud ready' : 'ready');
         b.innerHTML = '<span class="spell-icon">' + s.icon + '</span><span class="spell-name"></span><span class="spell-tag"></span>'
-          + '<span class="spell-badge ' + (s.cloud_ready ? 'ready' : '') + '">' + (s.cloud_ready ? 'cloud ready' : 'import lora') + '</span>';
+          + '<span class="spell-badge ' + (disabled ? '' : 'ready') + '">' + badge + '</span>';
         b.querySelector('.spell-name').textContent = s.name;
         b.querySelector('.spell-tag').textContent = s.tagline;
-        b.addEventListener('click', () => pickSpell(s.id));
+        if (!disabled) b.addEventListener('click', () => pickSpell(s.id));
         grid.appendChild(b);
       });
       host.appendChild(grid);
-    });
+    };
+    section(gpuOnly.length ? 'Ready now' : 'Spells', ready, false);
+    section('Needs your own GPU (not on Comfy Cloud yet)', gpuOnly, true);
   }
 
   function pickSpell(id) {
@@ -226,11 +231,12 @@
     };
   }
 
-  async function cast(params, source) {
+  async function cast(params, source, force) {
     if (state.submitting) return;
     state.submitting = true; updateCast(); showFormError('');
     const fd = new FormData();
     Object.keys(params).forEach((k) => { if (params[k] !== '' && params[k] != null) fd.append(k, params[k]); });
+    if (force) fd.append('force', 'true');
     if (source.jobId) { fd.append('source_job', source.jobId); fd.append('source_kind', source.kind || 'result'); }
     else if (source.file) fd.append('file', source.file, source.file.name);
     else { state.submitting = false; updateCast(); showFormError('Drop a clip first.'); return; }
@@ -249,6 +255,12 @@
       state.job = job;
       store.set('spellclip.lastJob', job.id);
       state.submitting = false; updateCast();
+      if (job.deduped) {
+        showFormError('You already cast this spell on this clip with these settings. Showing that result. Use "Same spell, new seed" for another take.');
+        if (job.status === 'done') { showResult(job); return; }
+        if (job.status === 'error') { showError(job.error || 'The job failed.'); return; }
+        renderProgress(job);
+      }
       poll();
     } catch (e) {
       state.submitting = false; updateCast();
@@ -372,8 +384,8 @@
       p.spell = state.job.spell; p.variant = state.job.variant || ''; p.scene = state.job.scene || ''; p.object = state.job.object || '';
       p.orientation = state.job.orientation || 'auto'; p.quality = state.job.quality || 'fast'; p.duration = state.job.duration || 'short';
       p.keep_audio = state.job.keep_audio ? 'true' : 'false';
-      if (state.job.source_job) cast(p, { jobId: state.job.source_job, kind: 'result' });
-      else cast(p, { jobId: state.job.id, kind: 'input' });
+      if (state.job.source_job) cast(p, { jobId: state.job.source_job, kind: 'result' }, true);
+      else cast(p, { jobId: state.job.id, kind: 'input' }, true);
     });
     const reset = () => {
       clearTimeout(state.pollTimer);
@@ -388,7 +400,7 @@
       if (state.lastParams) {
         const src = state.lastParams.source;
         if (src.file && !state.file) { showFormError('Drop the clip again to retry.'); setView('preview'); return; }
-        cast(state.lastParams.params, src.file ? { file: state.file } : src);
+        cast(state.lastParams.params, src.file ? { file: state.file } : src, true);
       } else reset();
     });
 

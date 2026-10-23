@@ -7,6 +7,10 @@
 - Built the registry (10 spells), the graph builder, exported 10 API-format workflows, and validated all of them against a CPU-only ComfyUI (every node and input accepted).
 - Built the server (Cloud, local, demo backends), the web UI, and tested the full flow with Playwright at phone, tablet and desktop widths.
 
+## October 23 (session 1, part 2)
+- Lando's calls: identity first (strengths as hard as the model cards allow without warping faces), exact duplicates collapse into the existing job, lead with the five cloud-ready spells, other five ship as local-GPU spells, own footage only.
+- Implemented: availability per backend, duplicate collapsing by clip hash plus settings, UI groups, shot list in docs/SHOTLIST.md.
+
 ## Waiting on
 - COMFY_API_KEY in the cloud environment (expected around October 24).
 - Confirmation of which plan the Cloud account is on (LoRA import needs Creator or above).

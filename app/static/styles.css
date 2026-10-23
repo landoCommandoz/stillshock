@@ -84,6 +84,8 @@ button, input { font-family: inherit; }
 .spell-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .spell-card { position: relative; text-align: left; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-primary); border-radius: 14px; padding: 12px 12px 12px; min-height: 92px; cursor: pointer; transition: transform .25s var(--ease), border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease); display: flex; flex-direction: column; gap: 4px; }
 .spell-card:hover { transform: translateY(-2px); border-color: var(--border-strong); background: var(--bg-card-strong); box-shadow: var(--shadow); }
+.spell-card.disabled { opacity: .45; cursor: not-allowed; filter: grayscale(.6); }
+.spell-card.disabled:hover { transform: none; box-shadow: none; }
 .spell-card.active { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 3px rgba(46,230,214,.12), var(--shadow); }
 .spell-icon { font-size: 22px; line-height: 1; }
 .spell-name { font-weight: 600; font-size: 15px; }

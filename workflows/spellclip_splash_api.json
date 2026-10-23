@@ -57,7 +57,7 @@
         0
       ],
       "lora_name": "ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors",
-      "strength_model": 1.2
+      "strength_model": 1.1
     },
     "_meta": {
       "title": "Spell LoRA: Add Water"

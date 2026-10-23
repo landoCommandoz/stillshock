@@ -6,6 +6,7 @@ or   python app/server.py
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import random
@@ -60,7 +61,7 @@ def _save(job: dict[str, Any]) -> None:
 
 
 def _public(job: dict[str, Any]) -> dict[str, Any]:
-    out = {k: v for k, v in job.items() if not k.startswith("_")}
+    out = {k: v for k, v in job.items() if not k.startswith("_") and k != "dedupe_key"}
     jid = job["id"]
     out["urls"] = {
         "input": f"/api/jobs/{jid}/file/input" if job.get("has_input") else None,
@@ -189,13 +190,32 @@ def _run_job(job_id: str) -> None:
 
 # ---------- API ----------
 
+EXTRA_LORAS = {x.strip() for x in os.environ.get("SPELLCLIP_EXTRA_LORAS", "").split(",") if x.strip()}
+
+
+def _spell_available(spell: dict[str, Any]) -> bool:
+    if BACKEND.name != "cloud":
+        return True
+    return bool(spell.get("cloud_ready")) or spell["id"] in EXTRA_LORAS or "all" in EXTRA_LORAS
+
+
+def _spells_for_ui() -> list[dict[str, Any]]:
+    out = []
+    for s in REGISTRY["spells"]:
+        item = dict(s)
+        item["available"] = _spell_available(s)
+        item["availability_note"] = "" if item["available"] else "Needs a local GPU or a LoRA import on Comfy Cloud"
+        out.append(item)
+    return out
+
+
 @app.get("/api/config")
 def get_config() -> dict[str, Any]:
     return {
         "app": "Spellclip",
         "backend": BACKEND.name,
         "demo_mode": BACKEND.name == "demo",
-        "spells": REGISTRY["spells"],
+        "spells": _spells_for_ui(),
         "sizes": REGISTRY["sizes"],
         "durations": REGISTRY["durations"],
         "fps": REGISTRY.get("fps", 24),
@@ -219,6 +239,7 @@ async def create_job(
     seed: int | None = Form(default=None),
     strength: float | None = Form(default=None),
     keep_audio: bool = Form(default=False),
+    force: bool = Form(default=False),
 ) -> JSONResponse:
     try:
         spell_def = get_spell(REGISTRY, spell)
@@ -226,6 +247,8 @@ async def create_job(
         raise HTTPException(400, "Unknown spell.")
     if spell_def.get("object_field") and not object.strip():
         raise HTTPException(400, "Tell the spell what should disappear (the object field is empty).")
+    if not _spell_available(spell_def):
+        raise HTTPException(400, f"{spell_def['name']} is not available on this backend yet. It needs a local GPU or a LoRA import on Comfy Cloud.")
     if orientation not in ("auto", "landscape", "portrait", "square"):
         raise HTTPException(400, "orientation must be auto, landscape, portrait or square.")
     if quality not in REGISTRY["sizes"]:
@@ -252,8 +275,10 @@ async def create_job(
             raise HTTPException(400, "The previous clip is no longer on disk.")
         shutil.copyfile(src_path, source)
         chain = (list(prev.get("chain", [])) + [prev["spell"]]) if source_kind == "result" else list(prev.get("chain", []))
+        source_key = f"job:{source_job}:{source_kind}"
     elif file is not None:
         size = 0
+        digest = hashlib.sha256()
         with open(source, "wb") as out:
             while True:
                 chunk = await file.read(1024 * 1024)
@@ -265,13 +290,29 @@ async def create_job(
                     shutil.rmtree(jd, ignore_errors=True)
                     raise HTTPException(413, f"That file is bigger than {MAX_UPLOAD_MB} MB. Trim it first.")
                 out.write(chunk)
+                digest.update(chunk)
         if size == 0:
             shutil.rmtree(jd, ignore_errors=True)
             raise HTTPException(400, "The upload was empty.")
         chain = []
+        source_key = "file:" + digest.hexdigest()
     else:
         shutil.rmtree(jd, ignore_errors=True)
         raise HTTPException(400, "Upload a clip or pick a previous result to stack on.")
+
+    # Exact duplicate (same clip, same spell, same settings) while a job is running or done:
+    # show that job instead of spending another run. Different spells queue normally.
+    dedupe_key = json.dumps([source_key, spell, variant or "", scene.strip(), object.strip(), orientation,
+                             quality, duration, seed, strength, bool(keep_audio)], sort_keys=False)
+    if not force:
+        with LOCK:
+            existing = next((j for j in JOBS.values() if j.get("dedupe_key") == dedupe_key
+                             and j.get("status") in ("queued", "running", "done")), None)
+        if existing:
+            shutil.rmtree(jd, ignore_errors=True)
+            out = _public(existing)
+            out["deduped"] = True
+            return JSONResponse(out, status_code=200)
 
     job: dict[str, Any] = {
         "id": job_id, "status": "queued", "stage": "queued", "progress": 0.0,
@@ -280,7 +321,7 @@ async def create_job(
         "seed": seed if seed is not None else random.randint(0, 2**31 - 1), "strength": strength,
         "keep_audio": bool(keep_audio), "chain": chain, "source_job": source_job,
         "backend": BACKEND.name, "created_at": time.time(), "updated_at": time.time(),
-        "_source": source,
+        "dedupe_key": dedupe_key, "_source": source,
     }
     _save(job)
     EXECUTOR.submit(_run_job, job_id)
