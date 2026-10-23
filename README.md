@@ -57,7 +57,7 @@ Files:
 You need Node 22 or newer and git. Nothing else: there are no npm dependencies.
 
 ```bash
-git clone https://github.com/landoCommandoz/stillshock
+git clone https://github.com/landoCommandoz/repo-for-the-contest stillshock
 cd stillshock/app
 npm start
 ```
@@ -140,7 +140,7 @@ the light, and the sound. That is the whole change. The app picks it up on resta
 - Width and height are multiples of 64 (704x1280, 960x960, 1280x704) because the graph
   renders at half resolution and upsamples x2.
 - Output assets on Comfy expire; the server keeps its own copy in `app/outputs/`.
-- Sample photos in `app/public/samples/` come from picsum.photos (Unsplash license).
+- Sample photos in `app/public/samples/` show no people. They are placeholders from picsum.photos (Unsplash license) until Lando's own photos replace them. Example clips are generated only from photos Lando shot himself, so no third-party likeness is used anywhere.
 
 ## License
 

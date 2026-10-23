@@ -101,7 +101,8 @@ function renderEffects() {
     });
 }
 
-const SAMPLES = ['samples/portrait.jpg', 'samples/dog.jpg', 'samples/sneaker.jpg', 'samples/city.jpg'];
+// Sample photos: no real people. Lando's own photos replace these before submission.
+const SAMPLES = ['samples/dog.jpg', 'samples/sneaker.jpg', 'samples/city.jpg'];
 function renderSamples() {
     const wrap = $('samples');
     wrap.innerHTML = '';

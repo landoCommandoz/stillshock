@@ -21,7 +21,7 @@ Deadline: October 30, 9am PT. Our target: October 29, 9am PT.
 - **Other tools or techniques used:** Comfy's core LTX-2.5 image-to-video template exported to API format and validated on a stock ComfyUI; two-pass sampling with x2 latent upscale; joint audio generation; effect recipes with sound design in the prompt; browser-side center crop to model size; bring-your-own-key server design; Node 22 server with zero dependencies; mock Comfy API for development.
 - **Category:** VFX Built with LTX Bonus, plus Most Viral as the main category pick (Best Overall is automatic). Also eligible for Open Weights Only.
 - **Is your stack fully open:** Yes. Every model, node and dependency is open weights or open source. Rented GPU through Comfy Cloud.
-- **Agreements:** repo public with MIT license; lawful, SFW, no unlicensed IP or real likenesses without permission (sample photos are Unsplash-licensed stock); permission to feature with credit; only submission.
+- **Agreements:** repo public with MIT license; lawful, SFW, no unlicensed IP or real likenesses without permission (every example photo was shot by Lando himself; the three placeholder samples in the app show a dog, strawberries and a landscape, no people); permission to feature with credit; only submission.
 - **Anything else:** The sound is generated in the same pass as the video. Adding an effect is one JSON entry. The deployed copy cannot spend the owner's credits by design.
 
 ## Social post caption (Lando posts before submitting)
