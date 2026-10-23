@@ -1,1 +1,53 @@
-{ "image": { "node": "395", "input": "image" }, "prompt": { "node": "10", "input": "text" }, "width": { "node": "20", "input": "width" }, "height": { "node": "20", "input": "height" }, "frames": { "node": "20", "input": "length" }, "prefix": { "node": "75", "input": "filename_prefix" } }
+{
+ "_about": "Which inputs of workflows/ltx25_i2v.api.json the app fills in. Exported from ComfyUI 0.42 core template video_ltx2_5_i2v with subgraph flattened (ids like 398:376 are subgraph-internal nodes).",
+ "image": {
+  "node": "395",
+  "input": "image"
+ },
+ "prompt": {
+  "node": "398:376",
+  "input": "value"
+ },
+ "negative": {
+  "node": "398:373",
+  "input": "text"
+ },
+ "seed": {
+  "node": "398:339",
+  "input": "noise_seed"
+ },
+ "seed2": {
+  "node": "398:338",
+  "input": "noise_seed"
+ },
+ "width": {
+  "node": "398:372",
+  "input": "value"
+ },
+ "height": {
+  "node": "398:360",
+  "input": "value"
+ },
+ "duration": {
+  "node": "398:362",
+  "input": "value"
+ },
+ "fps": {
+  "node": "398:361",
+  "input": "value"
+ },
+ "prompt_enhance": {
+  "node": "398:383",
+  "input": "value"
+ },
+ "prefix": {
+  "node": "75",
+  "input": "filename_prefix"
+ },
+ "constraints": {
+  "width_height_multiple_of": 64,
+  "duration_integer_seconds": true,
+  "fps": 24,
+  "frames_formula": "duration*fps+1"
+ }
+}

@@ -45,14 +45,21 @@ export async function buildWorkflow({ assetId, assetHash, fileName, prompt, widt
     const { graph: template, map } = await loadTemplate();
     const graph = structuredClone(template);
 
+    const multiple = (map.constraints && map.constraints.width_height_multiple_of) || 32;
+    if (width % multiple || height % multiple) throw new Error(`Width and height must be multiples of ${multiple} (got ${width}x${height})`);
+    const duration = Math.max(1, Math.round(durationSeconds));
+    const baseSeed = Number.isFinite(seed) ? Math.floor(seed) : Math.floor(Math.random() * 2 ** 48);
+
     setInput(graph, map.image, { __type: 'core/ASSET', info: { id: assetId, hash: assetHash || undefined, file_path: fileName } });
     setInput(graph, map.prompt, prompt);
-    if (map.seed) setInput(graph, map.seed, seed ?? Math.floor(Math.random() * 2 ** 48));
+    if (map.seed) setInput(graph, map.seed, baseSeed);
+    if (map.seed2) setInput(graph, map.seed2, baseSeed + 1);
     setInput(graph, map.width, width);
     setInput(graph, map.height, height);
-    if (map.duration) setInput(graph, map.duration, durationSeconds);
-    if (map.frames) setInput(graph, map.frames, framesFor(durationSeconds, FPS));
+    if (map.duration) setInput(graph, map.duration, duration);
+    if (map.frames) setInput(graph, map.frames, framesFor(duration, FPS));
     if (map.fps) setInput(graph, map.fps, FPS);
+    if (map.prompt_enhance) setInput(graph, map.prompt_enhance, false);
     if (map.prefix) setInput(graph, map.prefix, prefix);
     return graph;
 }

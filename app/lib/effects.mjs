@@ -105,9 +105,9 @@ export const EFFECTS = [
 ];
 
 export const FORMATS = {
-    vertical: { id: 'vertical', label: 'Vertical 9:16', width: 720, height: 1280 },
+    vertical: { id: 'vertical', label: 'Vertical 9:16', width: 704, height: 1280 },
     square: { id: 'square', label: 'Square 1:1', width: 960, height: 960 },
-    wide: { id: 'wide', label: 'Wide 16:9', width: 1280, height: 720 },
+    wide: { id: 'wide', label: 'Wide 16:9', width: 1280, height: 704 },
 };
 
 export const FPS = 24;
