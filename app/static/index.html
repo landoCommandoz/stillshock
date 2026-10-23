@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Spellclip</title>
+  <meta name="description" content="Drop a clip. Pick a spell. Get a share-ready VFX video, powered by open-weights LTX-2.3 on ComfyUI.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="device-preview-bar" aria-label="Device preview, remove before deploy">
+    <span class="dp-label">[ Device Preview, remove before deploy ]</span>
+    <button type="button" data-width="375px">📱 Mobile</button>
+    <button type="button" data-width="768px">📟 Tablet</button>
+    <button type="button" data-width="100%" class="active">🖥 Desktop</button>
+    <button type="button" id="dp-hide" title="Hide bar">✕</button>
+  </div>
+
+  <div id="frame">
+  <div id="app">
+    <div class="grain" aria-hidden="true"></div>
+    <div class="glow glow-a" aria-hidden="true"></div>
+    <div class="glow glow-b" aria-hidden="true"></div>
+
+    <header class="topbar reveal">
+      <div class="brand">
+        <span class="brand-mark">✦</span>
+        <span class="brand-name">Spellclip</span>
+        <span class="brand-tag">one-click VFX on open weights</span>
+      </div>
+      <div class="topbar-right">
+        <span id="mode-pill" class="pill">loading</span>
+        <button type="button" id="debug-toggle" class="ghost-btn" title="Show app state">state</button>
+      </div>
+    </header>
+
+    <div id="demo-banner" class="banner hidden">
+      <strong>DEMO MODE.</strong> No model is connected, so results are placeholder color filters.
+      Set <code>COMFY_API_KEY</code> (Comfy Cloud) or <code>COMFYUI_URL</code> (your own ComfyUI) and restart to run the real spells.
+    </div>
+
+    <main class="main-content">
+      <section class="panel controls">
+        <div class="scroll-container">
+
+          <!-- STEP 1: clip -->
+          <div class="step reveal" id="step-clip">
+            <div class="step-head"><span class="step-num">01</span><h2>Drop a clip</h2></div>
+            <label id="dropzone" class="dropzone" for="file-input">
+              <input id="file-input" type="file" accept="video/*,.mp4,.mov,.webm,.m4v">
+              <div class="dz-inner">
+                <div class="dz-icon">🎬</div>
+                <div class="dz-title">Tap to choose a video</div>
+                <div class="dz-sub">or drag one here. Phone clips work great. We use the first 5 to 7 seconds.</div>
+              </div>
+            </label>
+            <div id="clip-meta" class="clip-meta hidden">
+              <span id="clip-name"></span>
+              <button type="button" id="clip-clear" class="ghost-btn">change</button>
+            </div>
+          </div>
+
+          <!-- STEP 2: spell -->
+          <div class="step reveal" id="step-spell">
+            <div class="step-head"><span class="step-num">02</span><h2>Pick a spell</h2></div>
+            <div id="spell-groups"></div>
+          </div>
+
+          <!-- STEP 3: options -->
+          <div class="step reveal" id="step-options">
+            <div class="step-head"><span class="step-num">03</span><h2>Tune it</h2></div>
+            <div id="variant-row" class="field hidden">
+              <label>Flavor</label>
+              <div id="variant-chips" class="chips"></div>
+            </div>
+            <div id="scene-row" class="field hidden">
+              <label for="scene-input">What is in the shot? <span class="muted">(one line helps the model keep everything else the same)</span></label>
+              <input id="scene-input" type="text" maxlength="300" placeholder="a man in a grey hoodie walking down a city street">
+            </div>
+            <div id="object-row" class="field hidden">
+              <label for="object-input">What should disappear?</label>
+              <input id="object-input" type="text" maxlength="120" placeholder="the coffee cup">
+            </div>
+            <div class="field-grid">
+              <div class="field">
+                <label>Frame</label>
+                <div class="chips" id="orientation-chips">
+                  <button type="button" data-value="auto" class="active">Auto</button>
+                  <button type="button" data-value="portrait">9:16</button>
+                  <button type="button" data-value="landscape">16:9</button>
+                  <button type="button" data-value="square">1:1</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Quality</label>
+                <div class="chips" id="quality-chips">
+                  <button type="button" data-value="fast" class="active">Fast</button>
+                  <button type="button" data-value="hd">HD</button>
+                  <button type="button" data-value="full">Full</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Length</label>
+                <div class="chips" id="duration-chips">
+                  <button type="button" data-value="short" class="active">5 s</button>
+                  <button type="button" data-value="long">7 s</button>
+                </div>
+              </div>
+              <div class="field">
+                <label>Sound</label>
+                <div class="chips" id="audio-chips">
+                  <button type="button" data-value="generated" class="active">Model audio</button>
+                  <button type="button" data-value="original">Keep mine</button>
+                </div>
+              </div>
+            </div>
+            <details class="advanced">
+              <summary>Advanced</summary>
+              <div class="field-grid">
+                <div class="field">
+                  <label for="strength-input">Spell strength <span id="strength-value" class="muted"></span></label>
+                  <input id="strength-input" type="range" min="0.5" max="2.0" step="0.05">
+                </div>
+                <div class="field">
+                  <label for="seed-input">Seed <span class="muted">(blank = random)</span></label>
+                  <input id="seed-input" type="number" min="0" placeholder="random">
+                </div>
+              </div>
+            </details>
+            <button type="button" id="cast-btn" class="cast-btn" disabled>
+              <span class="cast-label">Cast the spell</span>
+              <span class="cast-sub" id="cast-sub">Pick a clip and a spell first</span>
+            </button>
+            <p id="form-error" class="form-error hidden" role="alert"></p>
+          </div>
+
+          <!-- recent -->
+          <div class="step reveal" id="step-recent">
+            <div class="step-head"><span class="step-num">✦</span><h2>Recent casts</h2></div>
+            <div id="recent-list" class="recent-list"><p class="muted">Nothing yet. Your results show up here, even after a refresh.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel stage">
+        <div class="scroll-container">
+          <div id="stage-empty" class="stage-card stage-empty reveal">
+            <div class="hero-word">VFX<br><em>in one tap</em></div>
+            <p class="hero-sub">Add water, turn day into night, vanish the crowd, go vertical. Every spell is an open-weights LTX-2.3 model running on ComfyUI, so what you make is yours.</p>
+            <div class="hero-chips"><span>LTX-2.3</span><span>ComfyUI</span><span>Open weights</span><span>MIT</span></div>
+          </div>
+
+          <div id="stage-preview" class="stage-card hidden">
+            <div class="stage-title">Your clip</div>
+            <video id="preview-video" class="video" playsinline muted loop controls></video>
+          </div>
+
+          <div id="stage-progress" class="stage-card hidden">
+            <div class="stage-title"><span id="progress-spell">Casting</span></div>
+            <div class="progress-wrap">
+              <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+              <div class="progress-row">
+                <span id="progress-stage" class="progress-stage">preparing</span>
+                <span id="progress-pct" class="progress-pct">0%</span>
+              </div>
+              <p id="progress-msg" class="progress-msg">Starting</p>
+            </div>
+            <video id="progress-video" class="video dim" playsinline muted loop autoplay></video>
+          </div>
+
+          <div id="stage-result" class="stage-card hidden">
+            <div class="stage-title-row">
+              <div class="stage-title"><span id="result-spell"></span></div>
+              <div class="chips small" id="compare-chips">
+                <button type="button" data-view="after" class="active">After</button>
+                <button type="button" data-view="before">Before</button>
+                <button type="button" data-view="split">Split</button>
+              </div>
+            </div>
+            <div class="result-video-wrap">
+              <video id="result-video" class="video" playsinline loop autoplay controls></video>
+              <div id="hold-hint" class="hold-hint">hold to see before</div>
+            </div>
+            <p id="result-prompt" class="muted prompt-line"></p>
+            <div class="result-actions">
+              <a id="download-btn" class="btn primary" download>Download</a>
+              <a id="download-compare-btn" class="btn" download>Download split</a>
+              <button type="button" id="stack-btn" class="btn">Stack another spell</button>
+              <button type="button" id="again-btn" class="btn">Same spell, new seed</button>
+              <button type="button" id="reset-btn" class="btn ghost">Start over</button>
+            </div>
+            <div id="chain-line" class="chain-line hidden"></div>
+          </div>
+
+          <div id="stage-error" class="stage-card stage-error hidden" role="alert">
+            <div class="stage-title">That did not work</div>
+            <p id="error-msg"></p>
+            <div class="result-actions">
+              <button type="button" id="retry-btn" class="btn primary">Try again</button>
+              <button type="button" id="error-reset-btn" class="btn ghost">Start over</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <aside id="debug-panel" class="debug-panel hidden" aria-label="Debug state panel, removable before deploy">
+      <div class="debug-head">STATE PANEL (remove before final deploy) <button type="button" id="debug-close" class="ghost-btn">✕</button></div>
+      <pre id="debug-json"></pre>
+    </aside>
+  </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

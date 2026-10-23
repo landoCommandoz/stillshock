@@ -1,0 +1,16 @@
+# secrets and local env
+.env
+*.key
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+# app runtime data (uploads, renders, job state)
+app/data/
+# node
+node_modules/
+# os
+.DS_Store
+# demo video working files
+demo/work/

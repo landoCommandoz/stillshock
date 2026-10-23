@@ -1,0 +1,237 @@
+[
+  {
+    "spell": "splash",
+    "file": "spellclip_splash_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-distilled-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-distilled-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-ic-lora-water-simulation-0.9.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Water-Simulation"
+      }
+    ]
+  },
+  {
+    "spell": "nightfall",
+    "file": "spellclip_nightfall_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-distilled-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-distilled-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-ic-lora-day-to-night-0.9.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Day-To-Night"
+      }
+    ]
+  },
+  {
+    "spell": "googly",
+    "file": "spellclip_googly_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-dev-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-distilled-lora-384.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384.safetensors"
+      },
+      {
+        "file": "ltx-2.3-googlyeyes.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/TheBurgstall/ltx-2.3-googlyeyes-lora"
+      }
+    ]
+  },
+  {
+    "spell": "vanish",
+    "file": "spellclip_vanish_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-distilled-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-distilled-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-ic-lora-clean-plate-1.0.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Clean-Plate"
+      }
+    ]
+  },
+  {
+    "spell": "colorize",
+    "file": "spellclip_colorize_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-distilled-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-distilled-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-ic-lora-colorization-0.9.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Colorization"
+      }
+    ]
+  },
+  {
+    "spell": "restore",
+    "file": "spellclip_restore_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-dev-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-distilled-lora-384.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384.safetensors"
+      },
+      {
+        "file": "ltx-2.3-dearchive-lora_weights_step_05000.safetensors",
+        "folder": "models/loras",
+        "url": "https://comfy.org/workflows"
+      }
+    ]
+  },
+  {
+    "spell": "shave",
+    "file": "spellclip_shave_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-distilled-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-distilled-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-ic-lora-instant-shave-0.9.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-22b-IC-LoRA-Instant-Shave"
+      }
+    ]
+  },
+  {
+    "spell": "erase",
+    "file": "spellclip_erase_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-dev-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-distilled-lora-384.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384.safetensors"
+      },
+      {
+        "file": "ltx23-obscura_remova.safetensors",
+        "folder": "models/loras",
+        "url": "https://comfy.org/workflows"
+      }
+    ]
+  },
+  {
+    "spell": "cleantext",
+    "file": "spellclip_cleantext_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-dev-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-distilled-lora-384.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384.safetensors"
+      },
+      {
+        "file": "ltx2.3-ic-subtitles-remove-general.safetensors",
+        "folder": "models/loras",
+        "url": "https://comfy.org/workflows"
+      }
+    ]
+  },
+  {
+    "spell": "reframe",
+    "file": "spellclip_reframe_api.json",
+    "models": [
+      {
+        "file": "ltx-2.3-22b-dev-fp8.safetensors",
+        "folder": "models/checkpoints",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3-fp8/resolve/main/ltx-2.3-22b-dev-fp8.safetensors"
+      },
+      {
+        "file": "gemma_3_12B_it_fp4_mixed.safetensors",
+        "folder": "models/text_encoders",
+        "url": "https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-distilled-lora-384.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/Lightricks/LTX-2.3/resolve/main/ltx-2.3-22b-distilled-lora-384.safetensors"
+      },
+      {
+        "file": "ltx-2.3-22b-ic-lora-outpaint.safetensors",
+        "folder": "models/loras",
+        "url": "https://huggingface.co/oumoumad/LTX-2.3-22b-IC-LoRA-Outpaint"
+      }
+    ]
+  }
+]
