@@ -13,6 +13,11 @@
 - Removed the stock portrait sample (a real person's face). Samples are now dog, strawberries, landscape. Lando shoots the example photos himself per docs/PHOTOLIST.md.
 - README clone URL now points at the repo's current name so a clean clone works before the rename.
 
+## October 25
+- Hard rule from Lando: zero spend. No paid plans, no paid compute.
+- Research: Comfy Cloud free tier is 5 GPU runs per new account, 30 minute cap, no card; API access needs a paid plan. Contest email campaign is tagged FreeCredit but no credit notice reached the inbox; balance to be checked in the Cloud UI. Kaggle (2x T4, about 30 GPU hours a week, no card) could run LTX-2.5 distilled GGUF Q4 with heavy risk on a 16 GB fp16-only card.
+- Wrote docs/CLOUD_RUNBOOK.md: taps and the exact 12 prompts to run the app's own LTX-2.5 I2V template on Comfy Cloud's free runs.
+
 ## Waiting on
 - COMFY_API_KEY in the cloud environment (expected around October 24) and confirmation that Cloud API access is active on the account.
 
